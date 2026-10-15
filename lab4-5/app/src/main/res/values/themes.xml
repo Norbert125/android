@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Az alkalmazás témája a splash screen eltűnése után.
+         NoActionBar: az action bar szerepét az activity_main.xml MaterialToolbar-ja veszi át. -->
+    <style name="Theme.Progr3ssApp" parent="Theme.Material3.DayNight.NoActionBar" />
+
+    <!-- Splash téma: ezt rajzolja ki a rendszer indító ablakként -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/my_splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.Progr3ssApp</item>
+    </style>
+</resources>
