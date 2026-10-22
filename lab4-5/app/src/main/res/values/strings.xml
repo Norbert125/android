@@ -8,26 +8,30 @@
 
     <!-- Bejelentkezés -->
     <string name="login_heading">Bejelentkezés</string>
-    <string name="hint_username">Felhasználónév / Email</string>
+    <string name="hint_email">Email</string>
     <string name="hint_password">Jelszó</string>
-    <string name="error_username">A felhasználónévnek legalább 6 karakternek kell lennie!</string>
-    <string name="error_password">A jelszónak legalább 6 karakterből kell állnia!</string>
     <string name="btn_login">Belépés</string>
     <string name="link_register">Nincs még fiókod? Regisztrálj!</string>
+    <string name="login_success">Sikeres bejelentkezés!</string>
 
     <!-- Regisztráció -->
     <string name="register_heading">Regisztráció</string>
+    <string name="hint_username">Felhasználónév</string>
+    <string name="register_success">Sikeres regisztráció!</string>
     <string name="btn_register">Regisztráció</string>
     <string name="link_login">Van már fiókod? Jelentkezz be!</string>
 
     <!-- Főoldal -->
     <string name="home_welcome">Üdv a főoldalon!</string>
     <string name="btn_view_profile">Profil megtekintése</string>
+    <string name="btn_logout">Kijelentkezés</string>
 
     <!-- Profil -->
     <string name="profile_heading">Profil</string>
-    <string name="profile_id">Azonosító: %1$s</string>
     <string name="profile_name">Név: %1$s</string>
+    <string name="profile_email">Email: %1$s</string>
+    <string name="profile_id">Azonosító: %1$d</string>
+    <string name="profile_guest">Vendég</string>
     <string name="btn_back_home">Vissza a főoldalra</string>
 
     <!-- Hálózat -->

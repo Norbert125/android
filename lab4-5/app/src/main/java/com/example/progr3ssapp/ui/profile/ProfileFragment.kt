@@ -5,9 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.progr3ssapp.R
 import com.example.progr3ssapp.databinding.FragmentProfileBinding
 import com.example.progr3ssapp.ui.navigateSafely
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -15,6 +20,8 @@ class ProfileFragment : Fragment() {
 
     // Csak onCreateView és onDestroyView között érvényes
     private val binding get() = _binding!!
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,28 +34,29 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Az argumentumok mindig jelen vannak: ha a hívó nem adta meg őket (alsó menü),
-        // a NavController a nav_graph.xml-ben megadott alapértékekkel tölti fel
-        val args = requireArguments()
-        val userId = args.getString(ARG_USER_ID).orEmpty()
-        val userName = args.getString(ARG_USER_NAME).orEmpty()
-
-        binding.tvUserId.text = getString(R.string.profile_id, userId)
-        binding.tvUserName.text = getString(R.string.profile_name, userName)
+        // Belépéskor frissít, így mindig az aktuálisan bejelentkezett felhasználót mutatja
+        viewModel.refresh()
 
         binding.btnBackHome.setOnClickListener {
             navigateSafely(R.id.action_profileFragment_to_homeFragment)
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect(::render)
+            }
+        }
+    }
+
+    private fun render(state: ProfileUiState) {
+        binding.tvUserName.text =
+            getString(R.string.profile_name, state.username ?: getString(R.string.profile_guest))
+        binding.tvUserEmail.text = getString(R.string.profile_email, state.email ?: "-")
+        binding.tvUserId.text = getString(R.string.profile_id, state.userId)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        // Meg kell egyezniük a nav_graph.xml <argument android:name="..."> értékeivel
-        const val ARG_USER_ID = "userId"
-        const val ARG_USER_NAME = "userName"
     }
 }

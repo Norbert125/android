@@ -25,6 +25,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.progr3ssapp.databinding.ActivityMainBinding
+import com.example.progr3ssapp.utils.SessionManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -92,6 +93,14 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+
+        // Automatikus belépés: ha van mentett token, a Login kimarad és a Home-on indulunk.
+        // Forgatás után a setGraph() a NavController elmentett back stackjét állítja vissza.
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
+        navGraph.setStartDestination(
+            if (SessionManager.getInstance(this).isLoggedIn) R.id.homeFragment else R.id.loginFragment
+        )
+        navController.setGraph(navGraph, null)
 
         // Felső szintű képernyők: ezeken nincs "vissza" nyíl a toolbaron.
         // A Login is ide tartozik, különben értelmetlen vissza nyíl jelenne meg rajta.

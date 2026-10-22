@@ -21,4 +21,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/btn_view_profile" />
+
+    <!-- Kijelentkezés: törli a session-t és visszavisz a Login-ra -->
+    <Button
+        android:id="@+id/btn_logout"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_logout" />
 </LinearLayout>

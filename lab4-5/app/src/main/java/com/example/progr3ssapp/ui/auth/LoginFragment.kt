@@ -4,12 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.progr3ssapp.R
 import com.example.progr3ssapp.databinding.FragmentLoginBinding
 import com.example.progr3ssapp.ui.navigateSafely
+import kotlinx.coroutines.launch
 
+/** Csak megjeleníti az állapotot és továbbítja az eseményeket; a Retrofithoz nem nyúl. */
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
@@ -17,8 +25,7 @@ class LoginFragment : Fragment() {
     // Csak onCreateView és onDestroyView között érvényes
     private val binding get() = _binding!!
 
-    // Jelzi, hogy a felhasználó megpróbált-e már belépni (hogy ne mutasson hibát gépelés előtt)
-    private var isSubmitted = false
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,40 +38,45 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Az első próbálkozás után gépelés közben frissülnek a hibaüzenetek
-        binding.etUsername.doAfterTextChanged { if (isSubmitted) validate() }
-        binding.etPassword.doAfterTextChanged { if (isSubmitted) validate() }
-
-        // Bejelentkezés gomb: sikeres validáció után a főoldalra navigál
-        binding.btnLogin.setOnClickListener {
-            isSubmitted = true
-            if (validate()) {
-                navigateSafely(R.id.action_loginFragment_to_homeFragment)
-            }
-        }
+        // Események a ViewModel felé
+        binding.etEmail.doAfterTextChanged { viewModel.onEmailChange(it?.toString().orEmpty()) }
+        binding.etPassword.doAfterTextChanged { viewModel.onPasswordChange(it?.toString().orEmpty()) }
+        binding.btnLogin.setOnClickListener { viewModel.login() }
 
         binding.btnGoRegister.setOnClickListener {
             navigateSafely(R.id.action_loginFragment_to_registerFragment)
         }
+
+        // Az állapot gyűjtése csak akkor fut, amikor a képernyő látható
+        // (a Compose-os collectAsStateWithLifecycle() megfelelője)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect(::render)
+            }
+        }
     }
 
-    /** Validáció (min. 6 karakter mindkét mezőben); a hibát a mező alatt jeleníti meg. */
-    private fun validate(): Boolean {
-        val isUsernameValid = (binding.etUsername.text?.length ?: 0) >= MIN_LENGTH
-        val isPasswordValid = (binding.etPassword.text?.length ?: 0) >= MIN_LENGTH
+    private fun render(state: LoginUiState) {
+        // Töltés közben minden le van tiltva, így nem lehet kétszer elküldeni
+        binding.tilEmail.isEnabled = !state.isLoading
+        binding.tilPassword.isEnabled = !state.isLoading
+        binding.btnLogin.isEnabled = !state.isLoading
+        binding.btnLogin.text = if (state.isLoading) null else getString(R.string.btn_login)
+        binding.progressLogin.isVisible = state.isLoading
 
-        binding.tilUsername.error = if (isUsernameValid) null else getString(R.string.error_username)
-        binding.tilPassword.error = if (isPasswordValid) null else getString(R.string.error_password)
-
-        return isUsernameValid && isPasswordValid
+        // Mellékhatások (Toast, navigáció): egyszer futnak le, amikor az állapot megváltozik
+        state.error?.let { message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+            viewModel.onErrorShown()
+        }
+        if (state.isLoggedIn) {
+            Toast.makeText(requireContext(), R.string.login_success, Toast.LENGTH_SHORT).show()
+            navigateSafely(R.id.action_loginFragment_to_homeFragment)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private companion object {
-        const val MIN_LENGTH = 6
     }
 }

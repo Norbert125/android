@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/loginFragment">
+    <!-- A kezdőpontot a MainActivity felülírja: mentett session esetén a homeFragment -->
 
     <fragment
         android:id="@+id/loginFragment"
@@ -43,6 +44,14 @@
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <!-- Kijelentkezés: az egész gráfot (minden belépett képernyőt) leveszi a back stackről,
+             így a Vissza gomb nem visz vissza a belépett részbe -->
+        <action
+            android:id="@+id/action_homeFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -50,15 +59,6 @@
         android:name="com.example.progr3ssapp.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile">
-        <!-- Az alapértékek miatt az alsó menüből argumentumok nélkül is megnyitható -->
-        <argument
-            android:name="userId"
-            android:defaultValue="guest"
-            app:argType="string" />
-        <argument
-            android:name="userName"
-            android:defaultValue="Guest"
-            app:argType="string" />
         <!-- Visszalép a már meglévő Home-ra, nem tesz újat a stackre -->
         <action
             android:id="@+id/action_profileFragment_to_homeFragment"

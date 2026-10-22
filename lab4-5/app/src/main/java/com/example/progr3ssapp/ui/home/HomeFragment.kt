@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.progr3ssapp.R
 import com.example.progr3ssapp.databinding.FragmentHomeBinding
 import com.example.progr3ssapp.ui.navigateSafely
-import com.example.progr3ssapp.ui.profile.ProfileFragment
 
 class HomeFragment : Fragment() {
 
@@ -17,6 +16,8 @@ class HomeFragment : Fragment() {
 
     // Csak onCreateView és onDestroyView között érvényes
     private val binding get() = _binding!!
+
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,13 +30,16 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Argumentumok átadása: a kulcsok megegyeznek a nav_graph.xml <argument> neveivel
+        // A Profil a mentett session-ből olvassa a felhasználót, argumentum nem kell
         binding.btnViewProfile.setOnClickListener {
-            val args = bundleOf(
-                ProfileFragment.ARG_USER_ID to "user_456",
-                ProfileFragment.ARG_USER_NAME to "Jane Doe"
-            )
-            navigateSafely(R.id.action_homeFragment_to_profileFragment, args)
+            navigateSafely(R.id.action_homeFragment_to_profileFragment)
+        }
+
+        // Kijelentkezés: a ViewModel törli a session-t, a navigációs action pedig
+        // a teljes back stacket (lásd nav_graph.xml)
+        binding.btnLogout.setOnClickListener {
+            viewModel.logout()
+            navigateSafely(R.id.action_homeFragment_to_loginFragment)
         }
     }
 

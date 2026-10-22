@@ -23,20 +23,20 @@
             android:text="@string/login_heading"
             android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
-        <!-- Felhasználónév / Email mező -->
+        <!-- Email mező (a backend emaillel léptet be) -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_username"
+            android:id="@+id/til_email"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_username">
+            android:hint="@string/hint_email">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_username"
+                android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="username"
-                android:inputType="text"
+                android:autofillHints="emailAddress"
+                android:inputType="textEmailAddress"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,12 +59,29 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btn_login"
+        <!-- Töltés közben a gomb szövege helyén forgó jelző látszik -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/btn_login" />
+            android:layout_marginTop="24dp">
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_login" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progress_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:elevation="8dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorSize="20dp"
+                app:trackThickness="2dp" />
+        </FrameLayout>
 
         <Button
             android:id="@+id/btn_go_register"

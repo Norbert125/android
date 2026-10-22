@@ -2,7 +2,7 @@ package com.example.progr3ssapp.network.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.json.JSONObject
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class ProfileDto(
@@ -14,7 +14,7 @@ data class ProfileDto(
     val profileImageBase64: String? = null,
     val coverImageUrl: String? = null,
     val fcmToken: String? = null,
-    val preferences: JSONObject? = null,
+    val preferences: JsonObject? = null,
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
 )

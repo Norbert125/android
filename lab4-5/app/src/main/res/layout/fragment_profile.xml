@@ -16,17 +16,23 @@
         android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
     <TextView
-        android:id="@+id/tv_user_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        tools:text="Azonosító: user_456" />
-
-    <TextView
         android:id="@+id/tv_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Név: Jane Doe" />
+        android:layout_marginTop="8dp"
+        tools:text="Név: claude_test" />
+
+    <TextView
+        android:id="@+id/tv_user_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Email: claude.test@example.com" />
+
+    <TextView
+        android:id="@+id/tv_user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Azonosító: 1" />
 
     <Button
         android:id="@+id/btn_back_home"
