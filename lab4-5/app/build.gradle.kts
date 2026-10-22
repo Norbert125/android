@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.serialization) // @Serializable osztályokhoz
 }
 
 android {
@@ -45,6 +46,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     // Splash screen
     implementation(libs.androidx.core.splashscreen)
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.compose) // viewModel() Compose-ban
+    implementation(libs.androidx.lifecycle.runtime.compose) // collectAsStateWithLifecycle()
+    // Hálózat
+    implementation(libs.kotlinx.serialization.json) // @Serializable, Json, JsonObject
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.kotlinx.serialization) // a Retrofit így (de)szerializál JSON-t
+    implementation(libs.okhttp.logging.interceptor) // kérések/válaszok naplózása a Logcatbe
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

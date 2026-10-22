@@ -1,10 +1,15 @@
 package com.example.progr3ssapp
 
+import android.Manifest
 import android.animation.ObjectAnimator
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -29,11 +34,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    // A helyi hálózati engedélykérés eredménye (a launchert még az onCreate előtt regisztrálni kell)
+    private val requestLocalNetworkPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (!granted) {
+                Toast.makeText(
+                    this,
+                    R.string.local_network_permission_required,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // 1. A splash screen telepítése a super.onCreate() ELŐTT
         //    (ez állítja át a témát a postSplashScreenTheme-re, amit az AppCompat igényel)
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        // Csak valódi indításkor kérjük: forgatás után ne jelenjen meg újra a dialógus
+        if (savedInstanceState == null) {
+            requestLocalNetworkPermissionIfNeeded()
+        }
 
         // 2. A splash látható marad, amíg a kezdeti betöltés tart.
         //    Csak valódi indításkor várunk: forgatás utáni újraépítéskor nincs splash,
@@ -108,11 +130,6 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.requestApplyInsets(binding.root)
         }
     }
-
-    /**
-     * Edge-to-edge (targetSdk 35+ esetén Android 15-től kötelező): a tartalom ne csússzon
-     * az állapotsor, a navigációs sáv vagy a billentyűzet alá.
-     */
     private fun applyWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val bars = insets.getInsets(
@@ -125,6 +142,15 @@ class MainActivity : AppCompatActivity() {
             view.setPadding(bars.left, bars.top, bars.right, bottom)
             // A felső és oldalsó részt már kezeltük, csak az alsót adjuk tovább a gyerekeknek
             insets.inset(bars.left, bars.top, bars.right, 0)
+        }
+    }
+
+    private fun requestLocalNetworkPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN && // API 37+
+            checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocalNetworkPermission.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
         }
     }
 

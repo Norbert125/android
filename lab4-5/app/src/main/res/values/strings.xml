@@ -29,4 +29,7 @@
     <string name="profile_id">Azonosító: %1$s</string>
     <string name="profile_name">Név: %1$s</string>
     <string name="btn_back_home">Vissza a főoldalra</string>
+
+    <!-- Hálózat -->
+    <string name="local_network_permission_required">A backend szerver eléréséhez helyi hálózati hozzáférés szükséges</string>
 </resources>
